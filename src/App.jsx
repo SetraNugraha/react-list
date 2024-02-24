@@ -1,8 +1,30 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
-import { BsCheckSquareFill } from 'react-icons/bs'
-import { BsTrash3Fill } from 'react-icons/bs'
+import { BsCheckSquareFill, BsTrash3Fill } from 'react-icons/bs'
+import { IoCloseSharp } from 'react-icons/io5'
 import numeral from 'numeral'
+
+const ListBelanjaan = ({ nama, jumlah, harga, status, toggleStatus }) => {
+  return (
+    <>
+      <tr className={`bg-gray-800 ${status ? 'bg-green-800 font-semibold' : ' '}`}>
+        <th scope="row" className="px-4 py-4 font-medium whitespace-nowrap text-white">
+          {nama}
+        </th>
+        <td className="px-6 py-4">{jumlah}</td>
+        <td className="px-6 py-4">{harga}</td>
+        <td className="px-6 py-4">
+          <button className={`p-2 ${status ? 'bg-yellow-600' : 'bg-green-600'}`} onClick={toggleStatus}>
+            {status ? <IoCloseSharp className="text-black" /> : <BsCheckSquareFill />}
+          </button>
+          <button className="p-2 bg-red-500">
+            <BsTrash3Fill />
+          </button>
+        </td>
+      </tr>
+    </>
+  )
+}
 
 export default function App() {
   const [belanjaan, setBelanjaan] = useState([])
@@ -10,6 +32,7 @@ export default function App() {
     nama: '',
     jumlah: '',
     harga: '',
+    status: false,
   })
 
   const handleChange = (e) => {
@@ -31,6 +54,7 @@ export default function App() {
       nama: '',
       jumlah: '',
       harga: '',
+      status: false,
     })
   }
 
@@ -39,34 +63,21 @@ export default function App() {
     return data ? JSON.parse(data) : []
   }
 
+  const data = getDataBelanjaan()
+
   useEffect(() => {
     const data = getDataBelanjaan()
     setBelanjaan(data)
   }, [])
 
-  const ListBelanjaan = ({ nama, jumlah, harga }) => {
-    return (
-      <>
-        <tr className=" bg-gray-800">
-          <th scope="row" className="px-4 py-4 font-medium whitespace-nowrap text-white">
-            {nama}
-          </th>
-          <td className="px-6 py-4">{jumlah}</td>
-          <td className="px-6 py-4">{harga}</td>
-          <td className="px-6 py-4">
-            <button className="p-2 bg-green-600">
-              <BsCheckSquareFill />
-            </button>
-            <button className="p-2 bg-red-500">
-              <BsTrash3Fill />
-            </button>
-          </td>
-        </tr>
-      </>
-    )
+  const toggleStatus = (index) => {
+    setBelanjaan((prevState) => {
+      const newBelanjaan = [...prevState]
+      newBelanjaan[index] = { ...newBelanjaan[index], status: !newBelanjaan[index].status }
+      localStorage.setItem('belanjaan', JSON.stringify(newBelanjaan))
+      return newBelanjaan
+    })
   }
-
-  const data = getDataBelanjaan()
 
   const getTotalHarga = () => {
     let total = 0
@@ -145,7 +156,7 @@ export default function App() {
             <tbody>
               {data.length > 0 ? (
                 data.map((item, index) => {
-                  return <ListBelanjaan key={index} nama={item.nama} jumlah={item.jumlah} harga={numeral(item.harga).format(0,0)} />
+                  return <ListBelanjaan key={index} toggleStatus={() => toggleStatus(index)} status={item.status} nama={item.nama} jumlah={item.jumlah} harga={numeral(item.harga).format(0, 0)} />
                 })
               ) : (
                 <tr>
