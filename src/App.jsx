@@ -4,28 +4,6 @@ import { BsCheckSquareFill, BsTrash3Fill } from 'react-icons/bs'
 import { IoCloseSharp } from 'react-icons/io5'
 import numeral from 'numeral'
 
-const ListBelanjaan = ({ nama, jumlah, harga, status, toggleStatus }) => {
-  return (
-    <>
-      <tr className={`bg-gray-800 ${status ? 'bg-green-800 font-semibold' : ' '}`}>
-        <th scope="row" className="px-4 py-4 font-medium whitespace-nowrap text-white">
-          {nama}
-        </th>
-        <td className="px-6 py-4">{jumlah}</td>
-        <td className="px-6 py-4">{harga}</td>
-        <td className="px-6 py-4">
-          <button className={`p-2 ${status ? 'bg-yellow-600' : 'bg-green-600'}`} onClick={toggleStatus}>
-            {status ? <IoCloseSharp className="text-black" /> : <BsCheckSquareFill />}
-          </button>
-          <button className="p-2 bg-red-500">
-            <BsTrash3Fill />
-          </button>
-        </td>
-      </tr>
-    </>
-  )
-}
-
 export default function App() {
   const [belanjaan, setBelanjaan] = useState([])
   const [formData, setFormData] = useState({
@@ -79,6 +57,15 @@ export default function App() {
     })
   }
 
+  const hapusBelanjaan = (index) => {
+    setBelanjaan((prevState) => {
+      const newListBelanjaan = [...prevState]
+      newListBelanjaan.splice(index, 1)
+      localStorage.setItem('belanjaan', JSON.stringify(newListBelanjaan))
+      return newListBelanjaan
+    })
+  }
+
   const getTotalHarga = () => {
     let total = 0
     data.forEach((item) => {
@@ -86,6 +73,28 @@ export default function App() {
     })
 
     return total
+  }
+
+  const ListBelanjaan = ({ nama, jumlah, harga, status, toggleStatus, hapusBelanjaan }) => {
+    return (
+      <>
+        <tr className={`bg-gray-800 ${status ? 'bg-green-800 font-semibold' : ' '}`}>
+          <th scope="row" className="px-4 py-4 font-medium whitespace-nowrap text-white">
+            {nama}
+          </th>
+          <td className="px-6 py-4">{jumlah}</td>
+          <td className="px-6 py-4">{harga}</td>
+          <td className="px-6 py-4">
+            <button className={`p-2 ${status ? 'bg-yellow-600' : 'bg-green-600'}`} onClick={toggleStatus}>
+              {status ? <IoCloseSharp className="text-black" /> : <BsCheckSquareFill />}
+            </button>
+            <button className="p-2 bg-red-500" onClick={hapusBelanjaan}>
+              <BsTrash3Fill />
+            </button>
+          </td>
+        </tr>
+      </>
+    )
   }
 
   return (
@@ -98,7 +107,7 @@ export default function App() {
       {/* END HEADER */}
 
       {/* START FORM INPUT */}
-      <div className="mt-10 px-5 py-5 ">
+      <div className="mt-10 px-5 py-5 || xl:w-[40%] xl:mx-auto">
         <form onSubmit={handleSubmit}>
           {/* Nama */}
           <div className="flex flex-col">
@@ -136,7 +145,7 @@ export default function App() {
       {/* START LIST */}
       <div className="px-2">
         <div className="relative overflow-x-auto">
-          <table className="w-full my-10 text-sm text-left rtl:text-right text-gray-300 ">
+          <table className="w-full my-10 text-sm text-left rtl:text-right text-gray-300 || xl:w-[50%] xl:mx-auto">
             <thead className="text-xs uppercase bg-gray-700 text-gray-300">
               <tr>
                 <th scope="col" className="px-6 py-3 rounded-s-lg">
@@ -156,7 +165,7 @@ export default function App() {
             <tbody>
               {data.length > 0 ? (
                 data.map((item, index) => {
-                  return <ListBelanjaan key={index} toggleStatus={() => toggleStatus(index)} status={item.status} nama={item.nama} jumlah={item.jumlah} harga={numeral(item.harga).format(0, 0)} />
+                  return <ListBelanjaan key={index} toggleStatus={() => toggleStatus(index)} hapusBelanjaan={() => hapusBelanjaan(index)} status={item.status} nama={item.nama} jumlah={item.jumlah} harga={numeral(item.harga).format(0, 0)} />
                 })
               ) : (
                 <tr>
