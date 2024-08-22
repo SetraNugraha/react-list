@@ -107,7 +107,7 @@ export default function App() {
       {/* END HEADER */}
 
       {/* START FORM INPUT */}
-      <div className="mt-10 px-5 py-5 || xl:w-[40%] xl:mx-auto">
+      <div className="mt-10 px-5 py-5">
         <form onSubmit={handleSubmit}>
           {/* Nama */}
           <div className="flex flex-col">
@@ -145,7 +145,7 @@ export default function App() {
       {/* START LIST */}
       <div className="px-2">
         <div className="relative overflow-x-auto">
-          <table className="w-full my-10 text-sm text-left rtl:text-right text-gray-300 || xl:w-[50%] xl:mx-auto">
+          <table className="w-full my-10 text-sm text-left rtl:text-right text-gray-300">
             <thead className="text-xs uppercase bg-gray-700 text-gray-300">
               <tr>
                 <th scope="col" className="px-6 py-3 rounded-s-lg">
